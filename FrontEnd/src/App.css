@@ -1,0 +1,59 @@
+.App-logo {
+  width: 200px;
+  pointer-events: none;
+  margin-right: 50px;
+}
+
+.App-header {
+  background-color: #282c34;
+  height: 10vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-body {
+  background-color: #fff;
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  font-size: calc(10px + 2vmin);
+  color: #000;
+}
+
+.App-body section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+section {
+  border: 1px solid #271E2C;
+  border-radius: 4px;
+  width: 50vw;
+  padding: 24px;
+  background-color: #f8f9fc;
+}
+
+section p,
+section ul {
+  font-size: 14pt;
+}
+section pre {
+  font-size: 12pt;
+  min-height: 95px;
+}
+
+section h3 {
+  text-align: center;
+}
+
+.container {
+  width: 100%;
+}
