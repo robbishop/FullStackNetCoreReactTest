@@ -24,7 +24,7 @@ namespace Core_Web_Api_Text
         /// <returns>the number of characters in the string</returns>
         public int GetSentenceCount()
         {
-            return Text.Split('.').Length;
+            return Text.Split('.', StringSplitOptions.RemoveEmptyEntries).Length;
         }
 
         /// <summary>
@@ -35,13 +35,12 @@ namespace Core_Web_Api_Text
         public int GetLineCount()
         {
             //Remove any multiple new lines just in case.
-            Regex.Replace(Text, @"(\r\n){2,}", Environment.NewLine);
+            var newText = Regex.Replace(Text, @"(\r\n){2,}", Environment.NewLine);
             int count = 1;
-            
-            for(int i = 0; i < Text.Length; i++)
+
+            for (int i = 0; i < newText.Length; i++)
             {
-         
-                if (Text[i] == '\n')
+                if (newText[i] == '\n')
                     count++;
             }
 
@@ -55,8 +54,7 @@ namespace Core_Web_Api_Text
         /// <returns>The number of paragraphs in the string</returns>
         public int GetParagraphCount()
         {
-
-            var paragraphs = Text.Split(new[] {Environment.NewLine + Environment.NewLine},
+            var paragraphs = Text.Split(new[] { Environment.NewLine + Environment.NewLine },
                 StringSplitOptions.RemoveEmptyEntries);
             return paragraphs.Length;
         }
@@ -68,7 +66,7 @@ namespace Core_Web_Api_Text
         /// <returns>The number of characters in the string</returns>
         public int GetCharacterCount()
         {
-            StringBuilder sb = new StringBuilder(Text.Length);
+            StringBuilder sb = new(Text.Length);
             for (int i = 0; i < Text.Length; i++)
             {
                 char c = Text[i];
@@ -91,11 +89,26 @@ namespace Core_Web_Api_Text
         /// Gets the top ten words by usage in the string
         /// </summary>
         /// <returns>Up to ten word with their count of instances in the string</returns>
-        public Dictionary<string, int> GetTopTenWords()
+        public IReadOnlyDictionary<string, int> GetTopTenWords()
         {
-
-            throw new NotImplementedException();
+            var words = Regex.Replace(Text, @"\W", " ").Split(" ", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var result = words.Select(w => w.ToLower())
+                            .GroupBy(w => w)
+                            .Select(g => new { g.Key, Count = g.Count() })
+                            .OrderByDescending(r => r.Count)
+                            .ThenBy(r => r.Key)
+                            .Take(10)
+                            .ToDictionary(r => r.Key, r => r.Count);
+            return result;
         }
 
+        public TextStatisticResult GetAllStats() => new()
+            {
+                CharacterCount = GetCharacterCount(),
+                LineCount = GetLineCount(),
+                ParagraphCount = GetParagraphCount(),
+                SentenceCount = GetSentenceCount(),
+                WordFrequency = GetTopTenWords()
+            };
     }
 }
