@@ -1,3 +1,4 @@
+using Core_Web_Api_Interfaces;
 using Core_Web_Api_Text;
 
 namespace Core_Web_Api_Test.Services
@@ -129,7 +130,7 @@ namespace Core_Web_Api_Test.Services
 
     public static class TextStatisticResultExtensions
     {
-        public static bool IsEqualTo(this TextStatisticResult result, TextStatisticResult other) => result.CharacterCount == other.CharacterCount &&
+        public static bool IsEqualTo(this ITextStatisticResult result, TextStatisticResult other) => result.CharacterCount == other.CharacterCount &&
                 result.LineCount == other.LineCount &&
                 result.ParagraphCount == other.ParagraphCount &&
                 result.SentenceCount == other.SentenceCount &&

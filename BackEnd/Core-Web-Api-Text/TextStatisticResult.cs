@@ -1,6 +1,8 @@
-﻿namespace Core_Web_Api_Text
+﻿using Core_Web_Api_Interfaces;
+
+namespace Core_Web_Api_Text
 {
-    public class TextStatisticResult
+    public class TextStatisticResult : ITextStatisticResult
     {
         public int CharacterCount { get; init; }
         public int LineCount { get; init; }

@@ -2,13 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>Core_Web_Api_Text</RootNamespace>
+    <RootNamespace>Core_Web_Api_Interfaces</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Core-Web-Api-Interfaces\Core-Web-Api-Interfaces.csproj" />
-  </ItemGroup>
 
 </Project>

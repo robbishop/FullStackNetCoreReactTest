@@ -1,9 +1,10 @@
-﻿using System.Text;
+﻿using Core_Web_Api_Interfaces;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Core_Web_Api_Text
 {
-    public class TextStatisticService
+    public class TextStatisticService : ITextStatisticService
     {
         public string Text { get; private set; } = string.Empty;
 
@@ -102,13 +103,13 @@ namespace Core_Web_Api_Text
             return result;
         }
 
-        public TextStatisticResult GetAllStats() => new()
-            {
-                CharacterCount = GetCharacterCount(),
-                LineCount = GetLineCount(),
-                ParagraphCount = GetParagraphCount(),
-                SentenceCount = GetSentenceCount(),
-                WordFrequency = GetTopTenWords()
-            };
+        public ITextStatisticResult GetAllStats() => new TextStatisticResult()
+        {
+            CharacterCount = GetCharacterCount(),
+            LineCount = GetLineCount(),
+            ParagraphCount = GetParagraphCount(),
+            SentenceCount = GetSentenceCount(),
+            WordFrequency = GetTopTenWords()
+        };
     }
 }

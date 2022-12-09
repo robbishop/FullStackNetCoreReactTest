@@ -1,53 +1,65 @@
-﻿using System.Text;
-using Core_Web_Api_Text;
-using Microsoft.AspNetCore.Http;
+﻿using Core_Web_Api_Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Core_Web_Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/TextStats")]
     [ApiController]
     public class TextStatsController : ControllerBase
     {
+        private readonly ITextStatisticService _service;
+
+        public TextStatsController(ITextStatisticService service)
+        {
+            _service = service;
+        }
+
         /// <summary>
         /// Gets statistical details from a string provided
         /// </summary>
         /// <param name="requestedText">The text to be analyzed.</param>
         /// <returns>A set of statistics</returns>
         [HttpPost(Name = "GetTextStats")]
-        public ActionResult GetTextStats([FromBody]string requestedText)
+        [RequestSizeLimit(1024)]
+        public ActionResult GetTextStats([FromBody] string requestedText)
         {
-            var service = new TextStatisticService();
-            service.LoadString(requestedText);
+            _service.LoadString(requestedText);
 
-            StringBuilder sb = new StringBuilder();
-
-            sb.AppendLine("Character count: " + service.GetCharacterCount());
-            sb.AppendLine("Line count: " + service.GetLineCount());
-            sb.AppendLine("Paragraph count: " + service.GetParagraphCount());
-            sb.AppendLine("Sentence count: " + service.GetSentenceCount());
-            // sb.AppendLine("Top Ten Words:");
-            //var topTenWords = service.GetTopTenWords();
-            //foreach (var entry in topTenWords)
-            //{
-            //    sb.AppendLine(entry.Key + " : " + entry.Value);
-            //}
-
-            return Ok(sb.ToString());
+            var result = _service.GetAllStats();
+            if (!Request.Headers.Accept.Contains("application/json")
+                && Request.Headers.Accept.Contains("text/plain"))
+            {
+                return new ContentResult
+                {
+                    Content = result.ToString(),
+                    ContentType = "text/plain",
+                    StatusCode = (int)HttpStatusCode.OK,
+                };
+            }
+            return Ok(result);
         }
 
         /// <summary>
         /// Gets statistical details from a file provided
         /// </summary>
         /// <returns>A set of statistics</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        
-        [HttpPost(Name = "GetTextFileStats")]
-        public ActionResult GetTextFileStats()
+        [HttpPost(Name = "GetTextFileStats"), Consumes("multipart/form-data")]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576)] // = 1024*1024 = 1MB
+        public async Task<ActionResult> GetTextFileStats(IFormFile file)
         {
-            throw new NotImplementedException();
+            if (file is null)
+                return Problem(detail: "No file supplied", statusCode: (int)HttpStatusCode.BadRequest);
 
+            if (file.ContentType != "text/plain")
+                return Problem(detail: $"Unsupported file type {Request.Form?.Files[0].ContentType}, please supply a text file (text/plain)", statusCode: (int)HttpStatusCode.UnsupportedMediaType);
+
+            using var ts = new StreamReader(Request.Form.Files[0].OpenReadStream());
+            var fileContents = await ts.ReadToEndAsync();
+
+            _service.LoadString(fileContents);
+
+            return Ok(_service.GetAllStats());
         }
-        
     }
 }
