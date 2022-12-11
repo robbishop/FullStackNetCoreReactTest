@@ -15,6 +15,12 @@ namespace Core_Web_Api.Controllers
             _service = service;
         }
 
+        [HttpGet]
+        public ActionResult Get()
+        {
+            return new ContentResult { Content = "{ \"status\": \"OK\" }", ContentType = "application/json" };
+        }
+
         /// <summary>
         /// Gets statistical details from a string provided
         /// </summary>

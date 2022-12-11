@@ -1,0 +1,120 @@
+name: Build, Test and deploy GBG Test Application
+
+on:
+  #push:
+  #  tags:
+  #    - v1.**
+
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened, closed]
+
+  #release:
+  #  types: [ published ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    name: Run integration tests
+
+    defaults:
+      run:
+        working-directory: BackEnd
+
+    # if: github.event.action != 'closed' || github.event.pull_request.merged
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.5.0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3.0.3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Test with Service
+        run: dotnet test --no-build --verbosity normal
+
+  #    # Testing with DynamoDb in container
+  #  - name: Start DynamoDB in GitHub Actions
+  #    uses: rrainn/dynamodb-action@v2.0.1
+  #    with:
+  #      port: 8000
+
+  #  - name: Test with Dynamodb Container
+  #    run: dotnet test --no-build --verbosity normal --filter FullyQualifiedName~ApiGateway.IntegrationTests
+
+  deploy:
+    name: Deploy AWS stack
+
+    runs-on: ubuntu-latest
+
+    #if: github.event.action == 'closed' && github.event.pull_request.merged
+
+    needs: test
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v2.5.0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3.0.3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: ./BackEnd
+
+      - name: Configure AWS credentials for Dev/Test account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.DEV_ACCOUNT_ID }}:role/GitHubOIDC-Role-1ORKNGIKT9AV5
+          role-session-name: GitHubActions-CDK
+          aws-region: eu-west-1
+        #if: github.base_ref != 'main'
+
+      #- name: Configure AWS credentials for Prod account
+      #  uses: aws-actions/configure-aws-credentials@v1
+      #  with:
+      #    role-to-assume: arn:aws:iam::${{ secrets.AWS_PROD_ACCOUNT_ID }}:role/GitHubActions-Compliance
+      #    role-session-name: GitHubActions-Compliance
+      #    aws-region: eu-west-1
+      #  if: github.base_ref == 'main'
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: "16"
+
+      - name: Install Lambda Tools
+        run: dotnet tool install -g Amazon.Lambda.Tools
+
+      - name: package lambda
+        run: dotnet lambda package
+        working-directory: ./BackEnd/Core-Web-Api
+
+      - name: Deploy via AWS CDK
+        working-directory: ./Deploy
+        run: |
+          npm i -g aws-cdk
+          cdk deploy --require-approval never --verbose
