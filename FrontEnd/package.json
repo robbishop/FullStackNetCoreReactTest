@@ -3,6 +3,14 @@
   "proxy": "https://localhost:7291",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robbishop/FullStackNetCoreReactTest.git"
+  },
+  "bugs": {
+    "url": "https://github.com/robbishop/FullStackNetCoreReactTest/issues"
+  },
+  "homepage": "https://github.com/robbishop/FullStackNetCoreReactTest#readme",
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.1",
     "@testing-library/jest-dom": "^5.16.5",
@@ -24,7 +32,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prepare": "cd.. && husky install"
   },
   "eslintConfig": {
     "extends": [
@@ -43,5 +52,14 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.46.0",
+    "eslint-config-prettier": "^8.5.0",
+    "husky": "^8.0.2",
+    "pretty-quick": "^3.1.3"
+  },
+  "prettier": {
+    "singleQuote": true
   }
 }
