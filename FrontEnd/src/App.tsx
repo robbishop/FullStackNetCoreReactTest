@@ -1,20 +1,20 @@
-import React, { useRef, useState } from "react";
-import axios from "axios";
-import { Counter } from "./features/counter/Counter";
+import React, { useRef, useState } from 'react';
+import axios from 'axios';
+import { Counter } from './features/counter/Counter';
 
-import logo from "./logo.svg";
-import "./App.css";
+import logo from './logo.svg';
+import './App.css';
 
-const DEFAULT_STATS_TEXT = "Stats will appear here.\n.\n.\n.\n.";
+const DEFAULT_STATS_TEXT = 'Stats will appear here.\n.\n.\n.\n.';
 
 function App() {
   const textField = useRef<HTMLTextAreaElement>(null);
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const [textStats, setTextStats] = useState(DEFAULT_STATS_TEXT);
   const newTextStats = () => {
     axios
-      .post("/api/TextStats", text, {
-        headers: { "content-type": "application/json" },
+      .post('/api/TextStats', text, {
+        headers: { 'content-type': 'application/json' },
       })
       .then((response) => {
         setTextStats(response.data);
@@ -42,7 +42,7 @@ function App() {
           <div className="container">
             <h3>Free text</h3>
             <textarea
-              style={{ width: "100%" }}
+              style={{ width: '100%' }}
               ref={textField}
               onChange={textChanged}
               rows={8}
