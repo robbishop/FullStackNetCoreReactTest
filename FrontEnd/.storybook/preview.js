@@ -7,3 +7,4 @@ export const parameters = {
     },
   },
 };
+import 'bootstrap/dist/css/bootstrap.css';
