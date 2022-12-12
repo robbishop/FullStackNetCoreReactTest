@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Testing.GetTextStatBenchmark-20221212-151859</title>
+
+    <style type="text/css">
+      table {
+        border-collapse: collapse;
+        display: block;
+        width: 100%;
+        overflow: auto;
+      }
+      td,
+      th {
+        padding: 6px 13px;
+        border: 1px solid #ddd;
+        text-align: right;
+      }
+      tr {
+        background-color: #fff;
+        border-top: 1px solid #ccc;
+      }
+      tr:nth-child(even) {
+        background: #f8f8f8;
+      }
+    </style>
+  </head>
+  <body>
+    <pre><code>
+BenchmarkDotNet=v0.13.2, OS=Windows 11 (10.0.22621.819)
+Intel Core i3-8145U CPU 2.10GHz (Whiskey Lake), 1 CPU, 4 logical and 2 physical cores
+.NET SDK=7.0.100
+  [Host]     : .NET 7.0.0 (7.0.22.51805), X64 RyuJIT AVX2
+  DefaultJob : .NET 7.0.0 (7.0.22.51805), X64 RyuJIT AVX2
+</code></pre>
+    <pre><code></code></pre>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>sample</th>
+          <th>Mean</th>
+          <th>Error</th>
+          <th>StdDev</th>
+          <th>Median</th>
+          <th>Gen0</th>
+          <th>Gen1</th>
+          <th>Gen2</th>
+          <th>Allocated</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>GetAllStats</td>
+          <td>10</td>
+          <td>230.1 &mu;s</td>
+          <td>4.56 &mu;s</td>
+          <td>11.44 &mu;s</td>
+          <td>225.2 &mu;s</td>
+          <td>53.7109</td>
+          <td>-</td>
+          <td>-</td>
+          <td>110.19 KB</td>
+        </tr>
+        <tr>
+          <td>GetAllStats</td>
+          <td>100</td>
+          <td>2,220.0 &mu;s</td>
+          <td>45.74 &mu;s</td>
+          <td>133.43 &mu;s</td>
+          <td>2,166.4 &mu;s</td>
+          <td>281.2500</td>
+          <td>82.0313</td>
+          <td>3.9063</td>
+          <td>951.76 KB</td>
+        </tr>
+        <tr>
+          <td>GetAllStats</td>
+          <td>1000</td>
+          <td>32,274.6 &mu;s</td>
+          <td>755.17 &mu;s</td>
+          <td>2,190.87 &mu;s</td>
+          <td>31,768.5 &mu;s</td>
+          <td>1933.3333</td>
+          <td>1800.0000</td>
+          <td>933.3333</td>
+          <td>16732.01 KB</td>
+        </tr>
+        <tr>
+          <td>GetAllStats</td>
+          <td>10000</td>
+          <td>349,214.8 &mu;s</td>
+          <td>8,080.11 &mu;s</td>
+          <td>23,183.36 &mu;s</td>
+          <td>342,397.8 &mu;s</td>
+          <td>11000.0000</td>
+          <td>7000.0000</td>
+          <td>3000.0000</td>
+          <td>169224.72 KB</td>
+        </tr>
+        <tr>
+          <td>GetAllStats</td>
+          <td>100000</td>
+          <td>3,562,851.9 &mu;s</td>
+          <td>70,107.39 &mu;s</td>
+          <td>109,148.76 &mu;s</td>
+          <td>3,541,495.5 &mu;s</td>
+          <td>74000.0000</td>
+          <td>42000.0000</td>
+          <td>8000.0000</td>
+          <td>1538412.04 KB</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

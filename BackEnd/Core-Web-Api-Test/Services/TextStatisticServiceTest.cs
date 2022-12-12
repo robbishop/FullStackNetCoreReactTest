@@ -3,13 +3,15 @@ using Core_Web_Api_Text;
 
 namespace Core_Web_Api_Test.Services
 {
-    public class TextStatisticServiceTestBase
+    public abstract class TextStatisticServiceTestBase
     {
+        public abstract ITextStatisticService GetTextStatisticService();
+
         [Fact]
         public void When_Loaded_With_Null_Then_Exception_Thrown()
         {
             // Arrange
-            var service = new TextStatisticService();
+            var service = GetTextStatisticService();
 
             // Act
             void act() => service.LoadString(null);
@@ -22,7 +24,7 @@ namespace Core_Web_Api_Test.Services
         public void When_Loaded_With_Not_Null_Then_No_Exception_Thrown()
         {
             // Arrange
-            var service = new TextStatisticService();
+            var service = GetTextStatisticService();
 
             // Act
             void act() => service.LoadString("TEST");
@@ -77,7 +79,7 @@ namespace Core_Web_Api_Test.Services
         public void When_character_count_called_then_correct_value_returned(string loadString, int charCount)
         {
             // Arrange
-            var service = new TextStatisticService();
+            var service = GetTextStatisticService();
 
             // Act
             service.LoadString(loadString);
@@ -96,7 +98,7 @@ namespace Core_Web_Api_Test.Services
         public void When_word_rank_called_then_correct_value_returned(string loadString, string[] expectedWords, int[] expectedCounts)
         {
             // Arrange
-            var service = new TextStatisticService();
+            var service = GetTextStatisticService();
 
             // Act
             service.LoadString(loadString);
@@ -110,7 +112,7 @@ namespace Core_Web_Api_Test.Services
         [Fact]
         public void When_get_all_stats_called_all_values_should_be_in_result()
         {
-            var service = new TextStatisticService();
+            var service = GetTextStatisticService();
             service.LoadString("one Two one");
 
             var result = service.GetAllStats();
@@ -136,5 +138,21 @@ namespace Core_Web_Api_Test.Services
                 result.SentenceCount == other.SentenceCount &&
                 (result.WordFrequency?.Keys.SequenceEqual(other.WordFrequency?.Keys ?? Enumerable.Empty<string>()) ?? false) &&
                 (result.WordFrequency?.Values.SequenceEqual(other.WordFrequency?.Values ?? Enumerable.Empty<int>()) ?? false);
+    }
+
+    public class TextStatisticServiceTest : TextStatisticServiceTestBase
+    {
+        public override ITextStatisticService GetTextStatisticService()
+        {
+            return new TextStatisticService();
+        }
+    }
+
+    public class TextStatisticServiceRefactorTest : TextStatisticServiceTestBase
+    {
+        public override ITextStatisticService GetTextStatisticService()
+        {
+            return new TextStatisticServiceRefactor();
+        }
     }
 }
